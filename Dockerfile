@@ -47,7 +47,7 @@ RUN composer dump-autoload
 RUN php artisan config:cache
 
 # Set permissions for storage and bootstrap cache
-#RUN chown -R www-data:www-data .
+RUN chown -R www-data:www-data .
 #RUN chmod -R 755 storage
 
 # Set the document root to the public directory

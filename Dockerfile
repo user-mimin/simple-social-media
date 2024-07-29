@@ -23,9 +23,9 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 # Enable Apache modules
 RUN a2enmod rewrite
 
-RUN mkdir -p bootstrap/cache && \
-    chown -R www-data:www-data bootstrap && \
-    chmod -R 755 bootstrap 
+RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/views storage/logs && \
+    chown -R www-data:www-data bootstrap storage && \
+    chmod -R 755 bootstrap storage 
 
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -44,8 +44,8 @@ RUN composer dump-autoload
 RUN php artisan config:cache
 
 # Set permissions for storage and bootstrap cache
-RUN chown -R www-data:www-data .
-RUN chmod -R 755 storage
+#RUN chown -R www-data:www-data .
+#RUN chmod -R 755 storage
 
 # Set the document root to the public directory
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public

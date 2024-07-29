@@ -1,27 +1,57 @@
-FROM ubuntu:22.04
+# Use an official PHP runtime as a parent image
+FROM php:8.2-apache
 
-RUN apt update -y && \
-    DEBIAN_FRONTEND=noninteractive apt install -y apache2 \
-    php \
-    npm \
-    php-xml \
-    php-mbstring \
-    php-curl \
-    php-mysql \
-    php-gd \
+# Set the working directory to /var/www/html
+WORKDIR /var/www/html
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    zip \
     unzip \
-    nano  \
-    curl
-RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev
 
-RUN mkdir /var/www/sosmed
-ADD . /var/www/sosmed
-ADD sosmed.conf /etc/apache2/sites-available/
-RUN a2dissite 000-default.conf && \
-    a2ensite sosmed.conf
-WORKDIR /var/www/sosmed
-RUN chown www-data:www-data /var/www/sosmed -R
-RUN chmod -R 755 /var/www/sosmed
-RUN ./install.sh
-EXPOSE 8080
+# Clear the apt cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Enable Apache modules
+RUN a2enmod rewrite
+
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy composer.json and composer.lock to the working directory
+# Copy the rest of the application code
+ADD .
+
+# Install application dependencies
+RUN composer install --no-scripts --no-autoloader
+
+
+# Generate autoload files and cache
+RUN composer dump-autoload
+RUN php artisan config:cache
+
+# Set permissions for storage and bootstrap cache
+RUN chown -R www-data:www-data .
+RUN chmod -R 755 storage
+
+# Set the document root to the public directory
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+
+# Update the default Apache virtual host configuration
+ADD ./sosmed.conf /etc/apache2/sites-available/000-default.conf
+
+# Expose port 80 for Apache
+EXPOSE 80
+
+# Start Apache
+#CMD ["apache2-foreground","./var/www/html/install.sh"]
+ENTRYPOINT ["sh", "install.sh"]

@@ -33,6 +33,8 @@ ADD ./ .
 # Install application dependencies
 RUN composer install --no-scripts --no-autoloader
 
+# Menjalankan composer update untuk memperbarui dependensi
+RUN composer update
 
 # Generate autoload files and cache
 RUN composer dump-autoload

@@ -21,7 +21,7 @@ ADD sosmed.conf /etc/apache2/sites-available/
 RUN a2dissite 000-default.conf && \
     a2ensite sosmed.conf
 WORKDIR /var/www/sosmed
-RUN ./install.sh
 RUN chown www-data:www-data /var/www/sosmed -R
 RUN chmod -R 755 /var/www/sosmed
+RUN ./install.sh
 EXPOSE 8080

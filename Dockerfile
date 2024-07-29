@@ -1,5 +1,5 @@
 # Use an official PHP runtime as a parent image
-FROM php:8.0.2-apache
+FROM php:apache
 
 # Set the working directory to /var/www/html
 WORKDIR /var/www/html

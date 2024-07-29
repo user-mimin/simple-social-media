@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  IMAGE_NAME: "${{ secrets.DOCKER_USER }}/username_adinusa-simple-social-media"
+  IMAGE_NAME: "${{ secrets.DOCKER_USER }}/miminnusa-simple-social-media"
   DOCKER_USER: "${{ secrets.DOCKER_USER }}"
 jobs:
   run-mysql-in-docker:

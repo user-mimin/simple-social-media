@@ -23,6 +23,10 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 # Enable Apache modules
 RUN a2enmod rewrite
 
+RUN mkdir -p bootstrap/cache && \
+    chown -R www-data:www-data bootstrap && \
+    chmod -R 755 bootstrap 
+
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

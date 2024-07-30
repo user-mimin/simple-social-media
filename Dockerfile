@@ -25,11 +25,6 @@ RUN a2enmod rewrite
 # Instal Composer secara global
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Pastikan direktori bootstrap/cache dan storage/framework/cache ada dan writable
-RUN mkdir -p bootstrap/cache storage/framework/cache && \
-    chmod -R 775 bootstrap/cache storage/framework/cache && \
-    chown -R www-data:www-data bootstrap/cache storage/framework/cache
-
 # Salin file composer.json dan composer.lock ke direktori kerja
 COPY composer.json composer.lock ./
 
@@ -41,6 +36,11 @@ RUN composer install --no-scripts --no-autoloader
 
 # Salin seluruh kode aplikasi ke direktori kerja
 COPY . .
+
+# Pastikan direktori cache Laravel ada dan writable
+RUN mkdir -p bootstrap/cache storage/framework/{cache,sessions,views} && \
+    chmod -R 775 bootstrap/cache storage && \
+    chown -R www-data:www-data bootstrap/cache storage
 
 # Generate autoload files dan cache
 RUN composer dump-autoload

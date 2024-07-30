@@ -8,4 +8,4 @@ services:
       
 networks:
   laravel:
-    driver: bridge
+    external: true

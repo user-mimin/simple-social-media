@@ -38,9 +38,9 @@ RUN composer install --no-scripts --no-autoloader
 COPY . .
 
 # Pastikan direktori cache Laravel ada dan writable
-RUN mkdir -p bootstrap/cache storage/framework/{cache,sessions,views} && \
-    chmod -R 775 bootstrap/cache storage && \
-    chown -R www-data:www-data bootstrap/cache storage
+RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/views storage/logs && \
+    chown -R www-data:www-data bootstrap storage && \
+    chmod -R 755 bootstrap storage 
 
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs

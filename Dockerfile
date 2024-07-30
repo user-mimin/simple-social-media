@@ -1,5 +1,5 @@
 # Gunakan image resmi PHP dengan Apache sebagai base image
-FROM php:8.2-apache
+FROM php:7.9-apache
 
 # Atur direktori kerja ke /var/www/html
 WORKDIR /var/www/html/

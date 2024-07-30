@@ -1,5 +1,7 @@
 services:
   web:
     image: ${DOCKER_USER}/miminnusa-simple-social-media
+    networks:
+      - laravel
     ports:
       - "8000:80"

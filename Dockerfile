@@ -1,10 +1,10 @@
-# Use an official PHP runtime as a parent image
+# Gunakan image resmi PHP dengan Apache sebagai base image
 FROM php:8.0.2-apache
 
-# Set the working directory to /var/www/html
+# Atur direktori kerja ke /var/www/html
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Instal dependensi sistem yang diperlukan
 RUN apt-get update && apt-get install -y \
     git \
     zip \
@@ -12,54 +12,45 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    libzip-dev
+    libzip-dev \
+    npm \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Clear the apt cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
+# Instal ekstensi PHP yang diperlukan
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Enable Apache modules
+# Aktifkan modul Apache yang diperlukan
 RUN a2enmod rewrite
 
-RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/views storage/logs && \
-    chown -R www-data:www-data bootstrap storage && \
-    chmod -R 755 bootstrap storage 
-
-# Install Composer globally
+# Instal Composer secara global
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy composer.json and composer.lock to the working directory
+# Salin file composer.json dan composer.lock ke direktori kerja
 COPY composer.json composer.lock ./
 
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs
-
-# Install application dependencies
+# Instal dependensi aplikasi
 RUN composer install --no-scripts --no-autoloader
 
-# Copy the rest of the application code
-ADD . .
+# Salin seluruh kode aplikasi ke direktori kerja
+COPY . .
 
-# Generate autoload files and cache
+# Generate autoload files dan cache
 RUN composer dump-autoload
 RUN php artisan config:cache
 
-# Set permissions for storage and bootstrap cache
-RUN chown -R www-data:www-data .
-#RUN chmod -R 755 storage
+# Setel izin untuk direktori storage dan bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Set the document root to the public directory
+# Setel document root ke direktori public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
-# Update the default Apache virtual host configuration
-ADD ./sosmed.conf /etc/apache2/sites-available/000-default.conf
+# Tambahkan konfigurasi Apache
+COPY sosmed.conf /etc/apache2/sites-available/000-default.conf
 
-# Expose port 80 for Apache
+# Ekspose port 80 untuk Apache
 EXPOSE 80
 
-# Start Apache
-#CMD ["apache2-foreground","./var/www/html/install.sh"]
-ENTRYPOINT ["sh", "install.sh"]
+# Jalankan perintah untuk memulai Apache
+CMD ["apache2-foreground"]

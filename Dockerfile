@@ -2,7 +2,7 @@
 FROM php:8.1-apache
 
 # Atur direktori kerja ke /var/www/html
-WORKDIR /var/www/html/test
+WORKDIR /var/www/html/
 
 # Instal dependensi sistem yang diperlukan
 RUN apt-get update && apt-get install -y \

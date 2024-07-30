@@ -19,7 +19,7 @@ jobs:
         run: docker network rm laravel
       - name: Create network docker 
         continue-on-error: true
-        run: docker network create --driver bridge --subnet 172.17.20.0/24 laravel
+        run: docker network create --driver bridge --subnet 192.168.3.0/24 laravel
       - name: Running mysql in container
         run:  docker run -d --name mysql --network laravel -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=social_media -p 3306:3306 mysql:5.7
       - name: List docker container

@@ -2,7 +2,7 @@
 FROM php:8.1-apache
 
 # Atur direktori kerja ke /var/www/html
-WORKDIR /var/www/html
+WORKDIR /var/www/html/test
 
 # Instal dependensi sistem yang diperlukan
 RUN apt-get update && apt-get install -y \
@@ -54,11 +54,13 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Setel document root ke direktori public
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+#ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+#RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
 # Tambahkan konfigurasi Apache
 COPY sosmed.conf /etc/apache2/sites-available/000-default.conf
+
+RUN a2ensite 000-default.conf
 
 # Ekspose port 80 untuk Apache
 EXPOSE 80

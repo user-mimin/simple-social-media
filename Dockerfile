@@ -25,6 +25,9 @@ RUN a2enmod rewrite
 # Instal Composer secara global
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+#Pastikan direktori bootstrap/cache ada dan writable
+RUN mkdir -p bootstrap/cache && chmod -R 775 bootstrap/cache && chown -R www-data:www-data bootstrap/cache
+
 # Salin file composer.json dan composer.lock ke direktori kerja
 COPY composer.json composer.lock ./
 

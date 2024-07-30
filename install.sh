@@ -8,4 +8,3 @@ sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/g' .env &&
 
 php artisan migrate
 php artisan db:seed
-apache2-foreground

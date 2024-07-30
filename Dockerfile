@@ -1,5 +1,5 @@
 # Gunakan image resmi PHP dengan Apache sebagai base image
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 # Atur direktori kerja ke /var/www/html
 WORKDIR /var/www/html/
@@ -62,8 +62,10 @@ COPY sosmed.conf /etc/apache2/sites-available/000-default.conf
 
 RUN a2ensite 000-default.conf
 
+RUN chmod +x install.sh
+
 # Ekspose port 80 untuk Apache
 EXPOSE 80
 
 # Jalankan perintah untuk memulai Apache
-CMD ["apache2-foreground"]
+CMD ["apache2-foreground", "./install.sh"]

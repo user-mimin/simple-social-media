@@ -68,4 +68,4 @@ RUN chmod +x install.sh
 EXPOSE 80
 
 # Jalankan perintah untuk memulai Apache
-CMD ["apache2-foreground", "./install.sh"]
+CMD ["sh", "install.sh"]

@@ -42,10 +42,10 @@ RUN mkdir -p bootstrap/cache storage/framework/{cache,sessions,views} && \
     chmod -R 775 bootstrap/cache storage && \
     chown -R www-data:www-data bootstrap/cache storage
 
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get install -y nodejs
+
 # Generate autoload files dan cache
-RUN php artisan cache:clear
-RUN php artisan config:clear
-RUN php artisan view:clear
 RUN composer dump-autoload
 RUN php artisan config:cache
 

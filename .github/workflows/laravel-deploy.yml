@@ -11,11 +11,16 @@ jobs:
   run-mysql-in-docker:
     runs-on: self-hosted
     steps:
+      - name: Delete docker network
+        continue-on-error: true
+        run: docker network rm laravel
+      - name: Create network docker 
+        run: docker network create laravel
       - name: Delete container mysql if exist
         continue-on-error: true
         run: docker rm -f $(docker ps -a | grep 'mysql\|social\|media' | awk '{print $1}')
       - name: Running mysql in container
-        run:  docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=social_media -p 3306:3306 mysql:5.7
+        run:  docker run -d --name mysql --network laravel -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=social_media -p 3306:3306 mysql:5.7
       - name: List docker container
         run: docker ps -a
   build-push-image:
